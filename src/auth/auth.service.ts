@@ -9,12 +9,12 @@ import { JwtService } from '@nestjs/jwt';
 export class AuthService {
     constructor(private prismaService: PrismaService,
         private jwtService: JwtService) { }
-
     create = async (userData: RegisterDto): Promise<CreateUserResponse> => {
         const user = await this.prismaService.user.findUnique({
             where: {
                 email: userData.email
             }
+
         });
         if (user) {
             throw new HttpException({ message: 'email' }, HttpStatus.BAD_REQUEST);
@@ -48,12 +48,13 @@ export class AuthService {
         }
         const payload = { id: user.id, name: user.name, email: user.email }
         const accessToken = await this.jwtService.signAsync(payload, {
-            secret: process.env.ACCESS_TOKEN_KEY,
+            secret: process.env.ACCESS_TOKEN_KEY || 'defaultAccessTokenSecret',
             expiresIn: '1h'
         })
+
         const refreshToken = await this.jwtService.signAsync(payload, {
-            secret: process.env.REFRESH_TOKEN_KEY,
-            expiresIn: '7d'
+            secret: process.env.REFRESH_TOKEN_KEY || 'defaultAccessTokenSecret',
+            expiresIn: '100d'
         })
 
         return {
@@ -84,12 +85,7 @@ export class AuthService {
                             contains: search
                         }
                     }
-                ],
-                // AND: [
-                //     {
-                //         status: 2
-                //     }
-                // ]
+                ]
             },
             orderBy: {
                 createdAt: 'desc'
@@ -148,6 +144,33 @@ export class AuthService {
         } catch (error) {
             console.error("Lỗi khi cập nhật người dùng:", error);
             throw error;
+        }
+    }
+
+    async delete(id: number): Promise<{ message: string }> {
+        try {
+            const existingUser = await this.prismaService.user.findUnique({
+                where: { id },
+            });
+
+            if (!existingUser) {
+                throw new HttpException(
+                    { message: `Không tìm thấy người dùng có id ${id}` },
+                    HttpStatus.NOT_FOUND
+                );
+            }
+
+            await this.prismaService.user.delete({
+                where: { id },
+            });
+
+            return { message: 'Xóa người dùng thành công' };
+        } catch (error) {
+            console.error("Lỗi khi xóa người dùng:", error);
+            throw new HttpException(
+                { message: "Lỗi khi xóa người dùng" },
+                HttpStatus.INTERNAL_SERVER_ERROR
+            );
         }
     }
 

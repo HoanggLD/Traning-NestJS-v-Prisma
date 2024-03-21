@@ -16,9 +16,6 @@ export class CreatePostDto {
     ownerId: number
 }
 
-
-
-
 export class UpdatePostDto {
     title: string;
     summary: string;

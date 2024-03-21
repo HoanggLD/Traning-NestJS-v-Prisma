@@ -1,4 +1,3 @@
-// main.ts (hoặc tệp khởi động của ứng dụng của bạn)
 
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
@@ -12,6 +11,6 @@ async function bootstrap() {
     allowedHeaders: 'Content-Type,Authorization',
   });
 
-  await app.listen(3001);
+  await app.listen(3003);
 }
 bootstrap();

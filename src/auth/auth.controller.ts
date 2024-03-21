@@ -1,8 +1,7 @@
 import { Controller, Post, Body, Get, Query, Param, ParseIntPipe, Put, Delete } from '@nestjs/common';
 import { User } from '@prisma/client'
 import { AuthService } from './auth.service';
-import { CreatePostDto, CreateUserResponse, LoginDto, PostFilterType, PostPaginationResponseType, RegisterDto, UpdatePostDto, UpdateUserDto, UserFilterType, UserPaginationResponseType } from './dtos/auth.dto';
-import { Post as PostModel } from '@prisma/client';
+import {  CreateUserResponse, LoginDto, RegisterDto, UpdateUserDto, UserFilterType, UserPaginationResponseType } from './dtos/auth.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -12,11 +11,11 @@ export class AuthController {
     // create(@Body() body: RegisterDto): Promise<User> {
     //     return this.authService.create(body)
     // }
-    
-@Post('register')
-async create(@Body() body: RegisterDto): Promise<CreateUserResponse> {
-    return this.authService.create(body);
-}
+
+    @Post('register')
+    async create(@Body() body: RegisterDto): Promise<CreateUserResponse> {
+        return this.authService.create(body);
+    }
 
 
     @Get()
@@ -41,6 +40,13 @@ async create(@Body() body: RegisterDto): Promise<CreateUserResponse> {
         console.log("update user api=> ", id)
         return this.authService.update(id, data)
     }
-   
+
+    @Delete(':id')
+    async delete(@Param('id', ParseIntPipe) id: number): Promise<{ message: string }> {
+        console.log("delete user api=> ", id)
+        const result = await this.authService.delete(id);
+        return result;
+    }
+    
 
 }
