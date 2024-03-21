@@ -28,7 +28,6 @@ export class UpdatePostDto {
         email: string;
     };
 }
-
 export interface PostFilterType {
     items_per_page?: number
     page?: number
