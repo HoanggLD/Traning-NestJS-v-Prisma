@@ -2,19 +2,19 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma.service';
 import { CreateUserResponse, RegisterDto, UpdateUserDto, UserFilterType, UserPaginationResponseType } from './dtos/auth.dto';
 import { User } from '@prisma/client';
-import { hash, compare } from 'bcrypt'
+import { hash, compare } from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class AuthService {
     constructor(private prismaService: PrismaService,
         private jwtService: JwtService) { }
+
     create = async (userData: RegisterDto): Promise<CreateUserResponse> => {
         const user = await this.prismaService.user.findUnique({
             where: {
                 email: userData.email
             }
-
         });
         if (user) {
             throw new HttpException({ message: 'email' }, HttpStatus.BAD_REQUEST);
@@ -51,12 +51,10 @@ export class AuthService {
             secret: process.env.ACCESS_TOKEN_KEY || 'defaultAccessTokenSecret',
             expiresIn: '1h'
         })
-
         const refreshToken = await this.jwtService.signAsync(payload, {
             secret: process.env.REFRESH_TOKEN_KEY || 'defaultAccessTokenSecret',
             expiresIn: '100d'
         })
-
         return {
             accessToken,
             refreshToken,
@@ -68,7 +66,6 @@ export class AuthService {
         const items_per_page = Number(filters.items_per_page) || 10
         const page = Number(filters.page) || 1
         const search = filters.search || ''
-
         const skip = page > 1 ? (page - 1) * items_per_page : 0
         const users = await this.prismaService.user.findMany({
             take: items_per_page,
@@ -108,7 +105,6 @@ export class AuthService {
                 ]
             }
         })
-
         return {
             data: users,
             total,
@@ -130,16 +126,13 @@ export class AuthService {
             const existingUser = await this.prismaService.user.findUnique({
                 where: { id },
             });
-
             if (!existingUser) {
-                throw new Error(`Không tìm thấy người dùng có id ${id}`);
+                throw new Error(`Không có người dùng nào có id là: ${id}`);
             }
-
             const updatedUser = await this.prismaService.user.update({
                 where: { id },
                 data,
             });
-
             return updatedUser;
         } catch (error) {
             console.error("Lỗi khi cập nhật người dùng:", error);
@@ -152,19 +145,16 @@ export class AuthService {
             const existingUser = await this.prismaService.user.findUnique({
                 where: { id },
             });
-
             if (!existingUser) {
                 throw new HttpException(
                     { message: `Không tìm thấy người dùng có id ${id}` },
                     HttpStatus.NOT_FOUND
                 );
             }
-
             await this.prismaService.user.delete({
                 where: { id },
             });
-
-            return { message: 'Xóa người dùng thành công' };
+            return { message: 'XÓa người dùng thành công !' };
         } catch (error) {
             console.error("Lỗi khi xóa người dùng:", error);
             throw new HttpException(
@@ -174,11 +164,8 @@ export class AuthService {
         }
     }
 
+
 }
-
-
-
-
 
 
 

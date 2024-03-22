@@ -23,7 +23,7 @@ export class UpdatePostDto {
     status: number;
     ownerId: number;
     owner: {
-        name: string;
+        name: string;   
         phone: string;
         email: string;
     };

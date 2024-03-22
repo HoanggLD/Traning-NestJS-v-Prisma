@@ -6,7 +6,6 @@ import { Post } from '@prisma/client';
 @Injectable()
 export class PostService {
     constructor(private prismaService: PrismaService) { }
-
     async create(data: CreatePostDto): Promise<Post> {
         return await this.prismaService.post.create({
             data: data,
@@ -51,7 +50,6 @@ export class PostService {
                 }
             }
         })
-
         const total = await this.prismaService.post.count({
             where: {
                 OR: [
@@ -73,7 +71,6 @@ export class PostService {
                 ]
             }
         })
-
         return {
             data: posts,
             total,
@@ -102,7 +99,6 @@ export class PostService {
 
     async update(id: number, data: UpdatePostDto): Promise<Post> {
         const { ownerId, owner, ...postData } = data;
-    
         const updatedPost = await this.prismaService.post.update({
             where: {
                 id,
@@ -113,15 +109,11 @@ export class PostService {
                     connect: { id: ownerId },
                     update: owner
                 }
-                
+
             }
         });
-    
         return updatedPost;
     }
-    
-    
-    
 
     async delete(id: number): Promise<Post> {
         const postToDelete = await this.prismaService.post.findUnique({
@@ -129,23 +121,18 @@ export class PostService {
                 id,
             },
         });
-    
         if (!postToDelete) {
-            throw new NotFoundException(`Post with ID ${id} not found`);
+            throw new NotFoundException(`Không có Post nào có id là : ${id}`);
         }
-    
         const deletedPost = await this.prismaService.post.delete({
             where: {
                 id,
             },
         });
-    
-        console.log(`Post with ID ${id} has been successfully deleted`);
-        console.log('Deleted Post:', deletedPost);
-        
-    
+        console.log(`Post có ${id} đã được xóa thành công`);
+        console.log('Đã xóa bài Post:', deletedPost);
         return deletedPost;
-}
+    }
 }
 
 

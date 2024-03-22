@@ -1,22 +1,17 @@
 import { Controller, Post, Body, Get, Query, Param, ParseIntPipe, Put, Delete } from '@nestjs/common';
 import { User } from '@prisma/client'
 import { AuthService } from './auth.service';
-import {  CreateUserResponse, LoginDto, RegisterDto, UpdateUserDto, UserFilterType, UserPaginationResponseType } from './dtos/auth.dto';
+import { CreateUserResponse, LoginDto, RegisterDto, UpdateUserDto, UserFilterType, UserPaginationResponseType } from './dtos/auth.dto';
+
 
 @Controller('auth')
 export class AuthController {
     constructor(private authService: AuthService) { }
 
-    // @Post('register')
-    // create(@Body() body: RegisterDto): Promise<User> {
-    //     return this.authService.create(body)
-    // }
-
     @Post('register')
     async create(@Body() body: RegisterDto): Promise<CreateUserResponse> {
         return this.authService.create(body);
     }
-
 
     @Get()
     getAll(@Query() params: UserFilterType): Promise<UserPaginationResponseType> {
@@ -46,7 +41,6 @@ export class AuthController {
         console.log("delete user api=> ", id)
         const result = await this.authService.delete(id);
         return result;
-    }
-    
+    }  
 
 }

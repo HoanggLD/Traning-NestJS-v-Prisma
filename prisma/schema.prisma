@@ -36,7 +36,3 @@ model Post {
   ownerId Int
 }
 
-// model Comment {
-//   id      Int    @id @default(autoincrement())
-//   message String
-// }
